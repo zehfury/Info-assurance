@@ -29,6 +29,7 @@ header("Content-Security-Policy: default-src 'self'; style-src 'self' https://fo
 Session::start();
 
 $routes = [
+    'vulnerable/login' => [VulnerableAuthController::class, 'login'],
     'login'          => [AuthController::class,  'login'],
     'register'       => [AuthController::class,  'register'],
     'logout'         => [AuthController::class,  'logout'],
@@ -55,5 +56,5 @@ try {
 } catch (Throwable $e) {
     error_log((string) $e);
     http_response_code(500);
-    echo 'Something went wrong. Check that the database is running and sql/migration.sql has been applied.';
+    echo 'Something went wrong. Check that MySQL is running and that schema.sql and secure/test.sql have been imported.';
 }

@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 final class SqliLog extends Model
 {
-    public const ENDPOINTS = ['login' => 'User login', 'admin_login' => 'Admin login', 'register' => 'Registration'];
+    public const ENDPOINTS = ['login' => 'User login', 'vulnerable_login' => 'Vulnerable login', 'admin_login' => 'Admin login', 'register' => 'Registration'];
 
     /** @param string[] $patterns */
     public function record(
@@ -14,7 +14,7 @@ final class SqliLog extends Model
         string $ip,
         ?string $userAgent,
         ?string $requestUri
-    ): void {
+    ): int {
         $stmt = $this->db->prepare(
             'INSERT INTO sqli_logs (endpoint, field_name, payload, matched_patterns, ip_address, user_agent, request_uri)
              VALUES (:endpoint, :field, :payload, :patterns, :ip, :ua, :uri)'
@@ -28,6 +28,20 @@ final class SqliLog extends Model
             ':ua'       => $userAgent === null ? null : mb_substr($userAgent, 0, 255),
             ':uri'      => $requestUri === null ? null : mb_substr($requestUri, 0, 255),
         ]);
+        return (int) $this->db->lastInsertId();
+    }
+
+    /** Attempts from one IP with $afterId < id < $beforeId (used to report throttled alerts). */
+    public function countFromIpBetween(string $ip, int $afterId, int $beforeId): int
+    {
+        $stmt = $this->db->prepare(
+            'SELECT COUNT(*) FROM sqli_logs WHERE ip_address = :ip AND id > :after AND id < :before'
+        );
+        $stmt->bindValue(':ip', $ip);
+        $stmt->bindValue(':after', $afterId, PDO::PARAM_INT);
+        $stmt->bindValue(':before', $beforeId, PDO::PARAM_INT);
+        $stmt->execute();
+        return (int) $stmt->fetchColumn();
     }
 
     public function total(?string $endpoint = null): int

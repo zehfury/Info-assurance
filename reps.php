@@ -1,8 +1,9 @@
 <?php
 /**
- * index.php — Dashboard shell for the SQL Injection Training Lab.
+ * reps.php — Vulnerable user-search dashboard for the SQL Injection Training Lab.
  */
 define('SQLI_LAB_INCLUDED', true);
+require_once __DIR__ . '/nav.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -13,6 +14,7 @@ define('SQLI_LAB_INCLUDED', true);
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="secure/assets/secure.css">
 </head>
 <body>
 
@@ -33,10 +35,7 @@ define('SQLI_LAB_INCLUDED', true);
 </header>
 
 <div class="layout">
-    <nav class="sidebar">
-        <a href="index.php" class="active">User Search</a>
-        <a href="lesson.php">Lesson: SQL Injection</a>
-    </nav>
+    <?= lab_sidebar('lab') ?>
 
     <main class="content">
         <div class="content-inner">
@@ -47,7 +46,7 @@ define('SQLI_LAB_INCLUDED', true);
                 <a href="lesson.php">lesson panel</a> below for payloads that reveal how this search box works
                 under the hood.</p>
 
-                <form class="search-form" action="index.php" method="GET">
+                <form class="search-form" action="reps.php" method="GET">
                     <input type="text" name="id" placeholder="Enter user ID, e.g. 1" value="<?= htmlspecialchars($_GET['id'] ?? '', ENT_QUOTES) ?>" autofocus>
                     <button type="submit">Search</button>
                 </form>

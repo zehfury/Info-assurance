@@ -67,26 +67,32 @@ abstract class Controller
         return $user;
     }
 
-    /** Log every field that looks like an SQL injection attempt. */
+    /** Log every field that looks like an SQL injection attempt, then alert the admin by email (throttled). */
     protected function inspectInput(string $endpoint, array $fields): void
     {
+        $ip  = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+        $ua  = $_SERVER['HTTP_USER_AGENT'] ?? null;
+        $uri = $_SERVER['REQUEST_URI'] ?? null;
+        $logged = [];
+
         foreach ($fields as $name => $value) {
             $hits = SqliDetector::detect((string) $value);
             if ($hits === []) {
                 continue;
             }
             try {
-                $this->logs->record(
-                    $endpoint,
-                    (string) $name,
-                    (string) $value,
-                    $hits,
-                    $_SERVER['REMOTE_ADDR'] ?? 'unknown',
-                    $_SERVER['HTTP_USER_AGENT'] ?? null,
-                    $_SERVER['REQUEST_URI'] ?? null
-                );
+                $id = $this->logs->record($endpoint, (string) $name, (string) $value, $hits, $ip, $ua, $uri);
+                $logged[] = ['id' => $id, 'field' => (string) $name, 'payload' => (string) $value, 'patterns' => $hits];
             } catch (Throwable $e) {
                 error_log('SQLi log write failed: ' . $e->getMessage());
+            }
+        }
+
+        if ($logged !== []) {
+            try {
+                AlertMailer::notify($this->logs, $endpoint, $logged, $ip, $ua, $uri);
+            } catch (Throwable $e) {
+                error_log('SQLi alert failed: ' . $e->getMessage());
             }
         }
     }

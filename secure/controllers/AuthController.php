@@ -9,8 +9,8 @@ final class AuthController extends Controller
     public function login(): void
     {
         $this->handleLogin('user', 'login', [
-            'title'     => 'Log in',
-            'heading'   => 'Log in',
+            'title'     => 'Secure Login',
+            'heading'   => 'Secure Login',
             'subtitle'  => 'Use your username or email and password.',
             'formRoute' => 'login',
             'isAdmin'   => false,

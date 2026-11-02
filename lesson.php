@@ -5,16 +5,17 @@
  */
 
 $standalone = !defined('SQLI_LAB_INCLUDED');
+require_once __DIR__ . '/nav.php';
 
 if ($standalone) {
     echo '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Lesson — SQLi Training Lab</title>';
     echo '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>';
     echo '<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">';
-    echo '<link rel="stylesheet" href="style.css"></head><body>';
+    echo '<link rel="stylesheet" href="style.css"><link rel="stylesheet" href="secure/assets/secure.css"></head><body>';
     echo '<div class="banner">Intentionally vulnerable. Run on localhost only. Never deploy to a public network.</div>';
     echo '<header class="app-header"><div class="header-title"><h1>SQLi Training Lab</h1><span class="header-subtitle">Lesson</span></div>';
     echo '<div class="badges"><span class="badge badge-slate">Local Lab</span><span class="badge badge-red">SQL Injection</span><span class="badge badge-blue">Beginner</span></div></header>';
-    echo '<div class="layout"><nav class="sidebar"><a href="index.php">User Search</a><a href="lesson.php" class="active">Lesson: SQL Injection</a></nav><main class="content"><div class="content-inner">';
+    echo '<div class="layout">' . lab_sidebar('lesson') . '<main class="content"><div class="content-inner">';
 }
 ?>
 

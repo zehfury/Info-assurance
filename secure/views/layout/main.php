@@ -18,12 +18,12 @@ $link = static function (string $route, string $label) use ($currentRoute): stri
 <link rel="stylesheet" href="assets/secure.css">
 </head>
 <body>
-<div class="banner">Hardened area: prepared statements + attack logging. Local lab only.</div>
+<div class="banner"><?= $currentRoute === 'vulnerable/login' ? 'Intentionally vulnerable login + attack logging. Local lab only.' : 'Hardened area: prepared statements + attack logging. Local lab only.' ?></div>
 
 <header class="app-header">
     <div class="header-title">
         <h1>SQLi Training Lab</h1>
-        <span class="header-subtitle">Secure Accounts</span>
+        <span class="header-subtitle"><?= $currentRoute === 'vulnerable/login' ? 'Vulnerable Login Lab' : 'Secure Accounts' ?></span>
     </div>
     <div class="badges">
         <?php if ($auth): ?>
@@ -38,7 +38,8 @@ $link = static function (string $route, string $label) use ($currentRoute): stri
 <div class="layout">
     <nav class="sidebar">
         <?php if (!$auth): ?>
-            <?= $link('login', 'Log in') ?>
+            <?= $link('login', 'Secure Login') ?>
+            <?= $link('vulnerable/login', 'Vulnerable Login') ?>
             <?= $link('register', 'Register') ?>
             <?= $link('admin/login', 'Admin log in') ?>
         <?php elseif ($auth['role'] === 'admin'): ?>
@@ -50,7 +51,7 @@ $link = static function (string $route, string $label) use ($currentRoute): stri
         <?php endif; ?>
 
         <div class="nav-sep"></div>
-        <a href="../index.php">Vulnerable lab</a>
+        <a href="../reps.php">Vulnerable lab</a>
         <a href="../lesson.php">Lesson</a>
 
         <?php if ($auth): ?>

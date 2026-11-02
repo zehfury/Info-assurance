@@ -1,4 +1,4 @@
--- Run once in phpMyAdmin (database: sqli_lab) AFTER importing sqli_lab.sql.
+-- Run once in phpMyAdmin (database: sqli_lab) AFTER importing ../schema.sql.
 -- Extends the existing `users` table (existing 30 rows are kept) and seeds the admin.
 
 ALTER TABLE `users`

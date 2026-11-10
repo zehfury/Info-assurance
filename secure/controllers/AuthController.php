@@ -91,13 +91,14 @@ final class AuthController extends Controller
     public function logout(): void
     {
         if ($this->isPost() && Session::verifyCsrf($_POST['csrf'] ?? null)) {
-            $wasAdmin = (Session::user()['role'] ?? '') === 'admin';
             Session::logout();
             Session::start(); // fresh session so the flash message can be shown
             Session::flash('success', 'You have been logged out.');
-            $this->redirect($wasAdmin ? 'admin/login' : 'login');
+            header('Location: ../index.php');
+            exit;
         }
-        $this->redirect('login');
+        header('Location: ../index.php');
+        exit;
     }
 
     private function handleLogin(string $role, string $endpoint, array $view): void

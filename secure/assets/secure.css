@@ -92,3 +92,54 @@ table.results td { vertical-align: top; }
 .xss-side-good { color: #166534; }
 .xss-frame { width: 100%; height: 190px; border: 1px solid var(--border); border-radius: 8px; background: #fff; display: block; margin-bottom: 12px; }
 .xss-note { font-size: 13px; color: var(--text-dim); margin-top: 16px; }
+
+/* XSS lab: result badges and highlights */
+.xss-result { font-size: 14px; font-weight: 600; padding: 8px 12px; border-radius: 8px; border: 1px solid; margin: 0 0 12px; }
+.xss-result-bad { background: var(--danger-bg); border-color: var(--danger-border); color: var(--danger); }
+.xss-result-good { background: #F0FDF4; border-color: #BBF7D0; color: #166534; }
+.xss-result-neutral { background: var(--slate-soft); border-color: var(--border); color: var(--slate-text); }
+.xss-mark-bad { background: rgba(220, 38, 38, .45); color: #FEE2E2; border-radius: 3px; padding: 0 2px; }
+.xss-mark-good { background: rgba(22, 163, 74, .45); color: #DCFCE7; border-radius: 3px; padding: 0 2px; }
+.xss-inline-bad { background: var(--danger-bg); color: var(--danger); border-radius: 3px; padding: 0 3px; }
+.xss-inline-good { background: #DCFCE7; color: #166534; border-radius: 3px; padding: 0 3px; }
+.xss-why { font-size: 14px; line-height: 1.6; margin: 0 0 8px; }
+.xss-map { margin-bottom: 8px; }
+
+/* XSS lab: progress tracker */
+.xss-progress { display: flex; align-items: center; gap: 12px; margin-top: 16px; }
+.xss-progress-label { font-size: 13px; font-weight: 600; color: var(--text); white-space: nowrap; }
+.xss-progress-bar { flex: 1; max-width: 220px; height: 8px; accent-color: #16A34A; }
+.xss-chip-done { background: #F0FDF4; border-color: #BBF7D0; color: #166534; }
+.xss-chip-current { box-shadow: 0 0 0 2px var(--primary); }
+
+/* XSS lab: lesson cards */
+.xss-flow { display: flex; align-items: stretch; gap: 8px; flex-wrap: wrap; margin: 8px 0 12px; }
+.xss-flow-step { flex: 1 1 160px; display: flex; flex-direction: column; gap: 4px; padding: 14px; border: 1px solid var(--border); border-radius: 10px; background: var(--slate-soft); font-size: 14px; }
+.xss-flow-step span:last-child { color: var(--text-dim); font-size: 13px; }
+.xss-flow-bad { background: var(--danger-bg); border-color: var(--danger-border); }
+.xss-flow-num { width: 24px; height: 24px; border-radius: 50%; background: var(--primary); color: #fff; font-size: 12px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; }
+.xss-flow-arrow { align-self: center; font-size: 20px; color: var(--text-dim); }
+.xss-fix-line { font-size: 14px; padding: 10px 14px; border-left: 4px solid #16A34A; background: #F0FDF4; border-radius: 0 8px 8px 0; }
+.xss-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; margin: 8px 0 16px; }
+.xss-card { display: flex; flex-direction: column; gap: 6px; padding: 14px; border: 1px solid var(--border); border-radius: 10px; font-size: 14px; background: var(--card); }
+.xss-card > span:not(.xss-card-icon) { color: var(--text-dim); font-size: 13px; line-height: 1.5; }
+.xss-card-file { margin-top: auto; align-self: flex-start; padding: 3px 8px; border-radius: 6px; font-size: 12px; background: #fff; color: #166534; border: 1px solid #BBF7D0; }
+.xss-card-icon { margin-bottom: 4px; }
+.xss-card-bad { border-color: var(--danger-border); background: var(--danger-bg); }
+.xss-card-good { border-color: #BBF7D0; background: #F0FDF4; }
+.xss-card-icon { font-size: 22px; line-height: 1; }
+.xss-compare { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin: 8px 0 12px; }
+.xss-compare-bad, .xss-compare-good { display: flex; flex-direction: column; gap: 6px; padding: 14px; border-radius: 10px; border: 1px solid; font-size: 14px; }
+.xss-compare-bad { background: var(--danger-bg); border-color: var(--danger-border); }
+.xss-compare-good { background: #F0FDF4; border-color: #BBF7D0; }
+.xss-compare-tag { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; }
+.xss-compare-bad .xss-compare-tag { color: var(--danger); }
+.xss-compare-good .xss-compare-tag { color: #166534; }
+.xss-compare code { font-size: 15px; }
+
+/* SQLi lesson: Try it buttons and collapsible notes */
+.sqli-try { display: inline-block; padding: 4px 10px; border-radius: 6px; background: var(--primary); color: #fff !important; font-size: 12px; font-weight: 600; text-decoration: none; white-space: nowrap; }
+.sqli-try:hover { background: var(--primary-hover); }
+.sqli-more { margin-top: 20px; border: 1px solid var(--border); border-radius: 10px; padding: 12px 16px; background: var(--slate-soft); }
+.sqli-more summary { cursor: pointer; font-weight: 600; font-size: 14px; }
+.sqli-more h4 { margin: 16px 0 6px; font-size: 14px; }

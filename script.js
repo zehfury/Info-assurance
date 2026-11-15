@@ -35,3 +35,27 @@ document.addEventListener('click', function (event) {
         showCopied();
     }
 });
+
+// Lesson: add a "Try it" button to each payload row that runs it in the search box.
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('table.sqli-payloads').forEach(function (table) {
+        var base = table.getAttribute('data-try-url') || 'reps.php';
+        table.querySelectorAll('tr').forEach(function (row, i) {
+            if (i === 0) {
+                var th = document.createElement('th');
+                row.appendChild(th);
+                return;
+            }
+            var code = row.querySelector('td code');
+            var cell = document.createElement('td');
+            if (code) {
+                var link = document.createElement('a');
+                link.className = 'sqli-try';
+                link.href = base + '?id=' + encodeURIComponent(code.textContent.trim());
+                link.textContent = 'Try it';
+                cell.appendChild(link);
+            }
+            row.appendChild(cell);
+        });
+    });
+});

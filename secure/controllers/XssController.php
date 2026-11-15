@@ -58,11 +58,21 @@ final class XssController extends Controller
             $this->logAction('xss_lab', isset($user['id']) ? (int) $user['id'] : null, $user['username'] ?? null, "$labels: $message");
         }
 
+        // Remember which suggestions have been tried this session, for the "tried 3 of 5" tracker.
+        $tried = array_values(array_filter((array) ($_SESSION['xss_tried'] ?? []), 'is_int'));
+        foreach (self::EXAMPLES as $i => $ex) {
+            if ($message === $ex['payload'] && !in_array($i, $tried, true)) {
+                $tried[] = $i;
+            }
+        }
+        $_SESSION['xss_tried'] = $tried;
+
         $this->render('xss/index', [
             'title'    => 'Cross-site scripting lab',
             'message'  => $message,
             'findings' => $findings,
             'examples' => self::EXAMPLES,
+            'tried'    => $tried,
         ]);
     }
 
@@ -102,11 +112,11 @@ final class XssController extends Controller
     private static function analyse(string $message): array
     {
         $checks = [
-            ['/<\s*script\b/i',        'Script tag',            'A <script> element runs JavaScript the moment the page loads.'],
-            ['/\bon[a-z]+\s*=/i',      'Event handler',         'An on…= attribute (onerror, onclick, …) runs JavaScript when that event fires, no <script> tag needed.'],
-            ['/javascript\s*:/i',      'javascript: URL',       'A javascript: link runs code when clicked.'],
-            ['/\bstyle\s*=/i',         'Inline style',          'A style attribute changes how the page looks, which is enough for defacement or hiding content.'],
-            ['/<\s*[a-z!\/]/i',        'HTML tags',             'Angle-bracket tags are parsed by the browser as real page elements, not text.'],
+            ['/<\s*script\b/i',        'Script tag',            'A <script> tag. The browser runs the code inside it as soon as the page loads.'],
+            ['/\bon[a-z]+\s*=/i',      'Event handler',         'An on...= attribute such as onerror or onclick. It runs code when something happens (an image fails, a click), so no <script> tag is needed.'],
+            ['/javascript\s*:/i',      'javascript: URL',       'A javascript: link. Clicking it runs code instead of opening a page.'],
+            ['/\bstyle\s*=/i',         'Inline style',          'A style attribute. It changes how the page looks, enough to deface it or hide real content.'],
+            ['/<\s*[a-z!\/]/i',        'HTML tags',             'Tags in < >. The browser treats them as real parts of the page instead of text.'],
         ];
 
         $found = [];

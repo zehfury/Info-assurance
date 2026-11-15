@@ -23,19 +23,20 @@ if ($standalone) {
     <span class="eyebrow">Step 3</span>
     <h2>Lesson: How This SQL Injection Works</h2>
 
-    <h3>1. What this page does</h3>
-    <p>
-        The search box on the dashboard takes whatever you type into the <code>id</code> parameter and glues it
-        directly onto the end of a SQL string with plain string concatenation
-        (<code>"... WHERE id = " . $input</code>). No escaping, no parameter binding, no type checking happens
-        before that string is sent to the database — so anything you type becomes part of the SQL the database
-        executes, not just a value being searched for. Because the value is concatenated <strong>unquoted</strong>
-        (a numeric context), payloads that don't need quotes work directly; payloads written for a quoted
-        context behave differently here, as shown below.
-    </p>
+    <h3>1. How this attack happens</h3>
+    <div class="xss-flow">
+        <div class="xss-flow-step"><span class="xss-flow-num">1</span><strong>You type an ID</strong><span>into the search box, for example <code>1</code></span></div>
+        <div class="xss-flow-arrow" aria-hidden="true">&rarr;</div>
+        <div class="xss-flow-step"><span class="xss-flow-num">2</span><strong>It is glued into the SQL</strong><span><code>"... WHERE id = " . $input</code>, with no checks</span></div>
+        <div class="xss-flow-arrow" aria-hidden="true">&rarr;</div>
+        <div class="xss-flow-step xss-flow-bad"><span class="xss-flow-num">3</span><strong>The database runs all of it</strong><span>extra SQL you typed becomes part of the command</span></div>
+    </div>
+    <p class="xss-fix-line"><strong>Watch the "Executed SQL Query" panel</strong> after each search: it shows exactly how your input changed the query.
+       The ID is added <strong>without quotes</strong>, so payloads that don't need quotes work directly.</p>
 
-    <h3>2. Payloads to try</h3>
-    <table>
+    <h3>2. Payloads to try, in order</h3>
+    <p>Press <strong>Try it</strong> to run a payload in the search box, then compare the results and the executed query.</p>
+    <table class="sqli-payloads" data-try-url="<?= htmlspecialchars($labUrl ?? 'reps.php', ENT_QUOTES) ?>">
         <tr>
             <th>Payload</th>
             <th>What it does</th>
@@ -75,15 +76,23 @@ if ($standalone) {
         </tr>
     </table>
 
-    <p>
-        Two payloads that show up in most SQLi cheat sheets are <strong>not</strong> included above because they
-        don't do anything useful against this specific endpoint: a trailing comment (<code>1 -- </code> or
-        <code>1#</code>) has nothing to strip off since the query ends right after your input, and a
-        quote-closing bypass (<code>1' OR '1'='1</code>) just throws a syntax error, since this query concatenates
-        the value <strong>without</strong> quotes. Both are covered conceptually in the notes below.
-    </p>
+    <h3>3. Why it works</h3>
+    <div class="xss-cards">
+        <div class="xss-card xss-card-bad"><span class="xss-card-icon" aria-hidden="true">🧩</span><strong>Input glued into SQL</strong><span>The database can't tell your data from its own commands.</span><code class="xss-card-file">search.php</code></div>
+        <div class="xss-card xss-card-bad"><span class="xss-card-icon" aria-hidden="true">🔢</span><strong>No input checks</strong><span>Nobody confirms the ID is really a number before using it.</span><code class="xss-card-file">search.php</code></div>
+        <div class="xss-card xss-card-bad"><span class="xss-card-icon" aria-hidden="true">📢</span><strong>Error messages shown</strong><span>Raw database errors tell an attacker exactly what to fix next.</span><code class="xss-card-file">search.php</code></div>
+    </div>
 
-    <h3>3. Payloads that don't apply here (and why)</h3>
+    <h3>4. How the secure app stops it</h3>
+    <div class="xss-cards">
+        <div class="xss-card xss-card-good"><span class="xss-card-icon" aria-hidden="true">🛡️</span><strong>Prepared statements</strong><span>Input is sent separately from the SQL, so it can only ever be a value.</span><code class="xss-card-file">secure/models/User.php</code></div>
+        <div class="xss-card xss-card-good"><span class="xss-card-icon" aria-hidden="true">🔍</span><strong>Detection and alerts</strong><span>Attack patterns are logged and the admin gets an email.</span><code class="xss-card-file">SqliDetector.php</code></div>
+        <div class="xss-card xss-card-good"><span class="xss-card-icon" aria-hidden="true">🤐</span><strong>Generic errors</strong><span>Visitors see a plain message; details go to the server log.</span><code class="xss-card-file">secure/bootstrap.php</code></div>
+    </div>
+
+    <details class="sqli-more">
+        <summary>Advanced notes: payloads that don't apply here, and database differences</summary>
+    <h4>Payloads that don't apply here (and why)</h4>
     <ul>
         <li><strong>Comment-out (<code>1 -- </code>, <code>1#</code>):</strong> valid syntax, but this query has
         nothing after the injection point to comment out, so the result looks identical to the baseline. It
@@ -96,7 +105,7 @@ if ($standalone) {
         error leakage.</li>
     </ul>
 
-    <h3>4. Version / dialect notes</h3>
+    <h4>Version / dialect notes</h4>
     <ul>
         <li>MySQL and MariaDB both support <code>#</code> and <code>-- </code> (note the required space after
         the two dashes) as single-line comment markers.</li>
@@ -112,18 +121,7 @@ if ($standalone) {
         whether the application wrapped your input in quotes before concatenating it — always confirm the
         query's quoting (via the "Executed SQL Query" panel above) before assuming a payload should work.</li>
     </ul>
-
-    <h3>5. Why it works</h3>
-    <ul>
-        <li><strong>String concatenation:</strong> user input is spliced directly into the SQL text, so the
-        database cannot tell the difference between "data" and "code" — anything typed becomes part of the
-        command.</li>
-        <li><strong>No input validation:</strong> the <code>id</code> parameter is never checked to confirm
-        it's actually a number before being used in a numeric context.</li>
-        <li><strong>Verbose error leakage:</strong> raw database error messages are printed straight to the
-        page, which hands an attacker exact syntax feedback to iterate on — turning trial-and-error into a
-        fast, guided process.</li>
-    </ul>
+    </details>
 </div>
 
 <?php

@@ -28,6 +28,6 @@
     </form>
 
     <?php if (!$isAdmin): ?>
-        <p class="form-foot">No account yet? <a href="<?= e(url('register')) ?>">Register</a></p>
+        <p class="form-foot">No account yet? <a href="../index.php?r=register">Register</a></p>
     <?php endif; ?>
 </div>

@@ -46,7 +46,8 @@ function lab_sidebar(string $active): string
 
     $out .= '<div class="nav-sep"></div>'
           . $link('reps.php', 'Vulnerable lab', $active === 'lab')
-          . $link('lesson.php', 'Lesson', $active === 'lesson');
+          . $link('lesson.php', 'Lesson', $active === 'lesson')
+          . $link($secure('xss'), 'XSS lab');
 
     if ($auth) {
         $csrf = $_SESSION['csrf'] ??= bin2hex(random_bytes(32));

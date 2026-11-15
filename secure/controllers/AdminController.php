@@ -46,6 +46,34 @@ final class AdminController extends Controller
         ]);
     }
 
+    public function actionLogs(): void
+    {
+        $perPage = (int) config('logs_per_page', 15);
+        $action = $_GET['action'] ?? '';
+        $action = is_string($action) && isset(ActionLog::ACTIONS[$action]) ? $action : null;
+        $total = $this->actions->total($action);
+        $pages = max(1, (int) ceil($total / $perPage));
+        $page = min($pages, max(1, (int) ($_GET['page'] ?? 1)));
+
+        $this->render('admin/action_logs', [
+            'title' => 'Action logs',
+            'rows' => $this->actions->page($perPage, ($page - 1) * $perPage, $action),
+            'total' => $total,
+            'page' => $page,
+            'pages' => $pages,
+            'action' => $action,
+            'actions' => ActionLog::ACTIONS,
+        ]);
+    }
+
+    public function clearActionLogs(): void
+    {
+        if ($this->isPost() && Session::verifyCsrf($_POST['csrf'] ?? null)) {
+            $this->actions->clear();
+        }
+        $this->redirect('admin/action-logs');
+    }
+
     public function clearLogs(): void
     {
         if ($this->isPost() && Session::verifyCsrf($_POST['csrf'] ?? null)) {

@@ -22,12 +22,15 @@ final class VulnerableAuthController extends Controller
                 try {
                     $account = Database::connection()->query($sql)->fetch() ?: null;
                     if ($account !== null) {
+                        $this->logAction('login_success', (int) $account['id'], $username, 'vulnerable login');
                         session_regenerate_id(true);
                         $_SESSION['lab_user'] = $account;
                     } else {
+                        $this->logAction('login_failed', null, $username, 'vulnerable login');
                         $errors[] = 'Invalid username or password.';
                     }
                 } catch (PDOException $exception) {
+                    $this->logAction('login_failed', null, $username, 'vulnerable login SQL error');
                     $errors[] = 'SQL error: ' . $exception->getMessage();
                 }
             }

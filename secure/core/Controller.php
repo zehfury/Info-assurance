@@ -4,10 +4,12 @@ declare(strict_types=1);
 abstract class Controller
 {
     protected SqliLog $logs;
+    protected ActionLog $actions;
 
     public function __construct(protected string $route)
     {
         $this->logs = new SqliLog();
+        $this->actions = new ActionLog();
     }
 
     /** Render a view inside the main layout. Views only receive what is passed here. */
@@ -86,6 +88,7 @@ abstract class Controller
             } catch (Throwable $e) {
                 error_log('SQLi log write failed: ' . $e->getMessage());
             }
+
         }
 
         if ($logged !== []) {
@@ -94,6 +97,15 @@ abstract class Controller
             } catch (Throwable $e) {
                 error_log('SQLi alert failed: ' . $e->getMessage());
             }
+        }
+    }
+
+    protected function logAction(string $action, ?int $userId = null, ?string $identifier = null, ?string $details = null): void
+    {
+        try {
+            $this->actions->record($action, $userId, $identifier, $details);
+        } catch (Throwable $e) {
+            error_log('Action log write failed: ' . $e->getMessage());
         }
     }
 }

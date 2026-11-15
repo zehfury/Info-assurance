@@ -74,8 +74,10 @@ final class AuthController extends Controller
                         $old['email'],
                         password_hash($password, PASSWORD_DEFAULT)
                     );
+                    $this->logAction('register', null, $old['username'], 'registration succeeded');
                     Session::flash('success', 'Account created. You can log in now.');
-                    $this->redirect('login');
+                    header('Location: ../index.php');
+                    exit;
                 } catch (PDOException $e) {
                     if ($e->getCode() !== '23000') { // duplicate key race — anything else is a real error
                         throw $e;
@@ -91,6 +93,8 @@ final class AuthController extends Controller
     public function logout(): void
     {
         if ($this->isPost() && Session::verifyCsrf($_POST['csrf'] ?? null)) {
+            $user = Session::user();
+            $this->logAction('logout', isset($user['id']) ? (int) $user['id'] : null, $user['username'] ?? null, 'user logout');
             Session::logout();
             Session::start(); // fresh session so the flash message can be shown
             Session::flash('success', 'You have been logged out.');
@@ -122,9 +126,11 @@ final class AuthController extends Controller
                 $valid   = password_verify($password, $hash) && $account !== null;
 
                 if ($valid) {
+                    $this->logAction('login_success', (int) $account['id'], $identifier, $role);
                     Session::login($account);
                     $this->redirect($role === 'admin' ? 'admin' : 'dashboard');
                 }
+                $this->logAction('login_failed', null, $identifier, $role);
                 $errors[] = 'Invalid username or password.'; // same message for every failure
             }
         }

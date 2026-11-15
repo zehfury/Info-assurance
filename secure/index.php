@@ -38,7 +38,10 @@ $routes = [
     'admin'          => [AdminController::class, 'dashboard'],
     'admin/logs'     => [AdminController::class, 'logs'],
     'admin/logs/clear' => [AdminController::class, 'clearLogs'],
+    'admin/action-logs' => [AdminController::class, 'actionLogs'],
+    'admin/action-logs/clear' => [AdminController::class, 'clearActionLogs'],
     'admin/users'    => [AdminController::class, 'users'],
+    'xss'            => [XssController::class, 'index'],
 ];
 
 $route = trim((string) ($_GET['r'] ?? 'login'), '/');

@@ -17,6 +17,24 @@ $errors = [];
 $identifier = '';
 $dummyHash = '$2y$10$6J5yXx5Om7jB0qVOQrps6OkEfVAkMXof9umcxl/Hv6lhrfAF0jsv6';
 
+function log_root_action(PDO $pdo, string $action, ?int $userId, ?string $identifier, ?string $details): void
+{
+    $stmt = $pdo->prepare(
+        'INSERT INTO action_logs
+            (action, user_id, identifier, details, ip_address, user_agent, request_uri)
+         VALUES (:action, :user_id, :identifier, :details, :ip, :user_agent, :uri)'
+    );
+    $stmt->execute([
+        ':action'     => $action,
+        ':user_id'    => $userId,
+        ':identifier' => $identifier,
+        ':details'    => $details,
+        ':ip'         => substr((string) ($_SERVER['REMOTE_ADDR'] ?? 'unknown'), 0, 45),
+        ':user_agent' => isset($_SERVER['HTTP_USER_AGENT']) ? substr((string) $_SERVER['HTTP_USER_AGENT'], 0, 255) : null,
+        ':uri'        => isset($_SERVER['REQUEST_URI']) ? substr((string) $_SERVER['REQUEST_URI'], 0, 255) : null,
+    ]);
+}
+
 if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
     $identifier = trim(is_string($_POST['identifier'] ?? null) ? $_POST['identifier'] : '');
     $password = is_string($_POST['password'] ?? null) ? $_POST['password'] : '';
@@ -44,6 +62,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
             && $account !== null;
 
         if ($valid) {
+            log_root_action($pdo, 'login_success', (int) $account['id'], $identifier, 'user');
             session_regenerate_id(true);
             $_SESSION['user'] = [
                 'id'       => (int) $account['id'],
@@ -56,6 +75,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
             exit;
         }
 
+        log_root_action($pdo, 'login_failed', null, $identifier, 'user');
         $errors[] = 'Invalid username or password.';
     }
 }

@@ -36,15 +36,17 @@ $link = static function (string $route, string $label) use ($currentRoute): stri
 </header>
 
 <div class="layout">
+    <?php if (!in_array($currentRoute, ['login', 'register', 'admin/login'], true)): ?>
     <nav class="sidebar">
         <?php if (!$auth): ?>
-            <?= $link('login', 'Secure Login') ?>
+            <a href="../index.php">Secure Login</a>
             <?= $link('vulnerable/login', 'Vulnerable Login') ?>
             <?= $link('register', 'Register') ?>
             <?= $link('admin/login', 'Admin log in') ?>
         <?php elseif ($auth['role'] === 'admin'): ?>
             <?= $link('admin', 'Dashboard') ?>
             <?= $link('admin/logs', 'SQLi logs') ?>
+            <?= $link('admin/action-logs', 'Action logs') ?>
             <?= $link('admin/users', 'Users') ?>
         <?php else: ?>
             <?= $link('dashboard', 'My account') ?>
@@ -53,6 +55,7 @@ $link = static function (string $route, string $label) use ($currentRoute): stri
         <div class="nav-sep"></div>
         <a href="../reps.php">Vulnerable lab</a>
         <a href="../lesson.php">Lesson</a>
+        <a href="<?= e(url('xss')) ?>">XSS lab</a>
 
         <?php if ($auth): ?>
             <div class="nav-sep"></div>
@@ -62,6 +65,7 @@ $link = static function (string $route, string $label) use ($currentRoute): stri
             </form>
         <?php endif; ?>
     </nav>
+    <?php endif; ?>
 
     <main class="content">
         <div class="content-inner">

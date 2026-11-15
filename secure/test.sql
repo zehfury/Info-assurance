@@ -29,3 +29,19 @@ CREATE TABLE IF NOT EXISTS `sqli_logs` (
   KEY `idx_sqli_logs_created` (`created_at`),
   KEY `idx_sqli_logs_endpoint` (`endpoint`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE IF NOT EXISTS `action_logs` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `action` varchar(50) NOT NULL,
+  `user_id` int unsigned DEFAULT NULL,
+  `identifier` varchar(200) DEFAULT NULL,
+  `details` varchar(500) DEFAULT NULL,
+  `ip_address` varchar(45) NOT NULL,
+  `user_agent` varchar(255) DEFAULT NULL,
+  `request_uri` varchar(255) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  KEY `idx_action_logs_created` (`created_at`),
+  KEY `idx_action_logs_action` (`action`),
+  KEY `idx_action_logs_user` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

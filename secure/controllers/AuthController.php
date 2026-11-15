@@ -76,8 +76,7 @@ final class AuthController extends Controller
                     );
                     $this->logAction('register', null, $old['username'], 'registration succeeded');
                     Session::flash('success', 'Account created. You can log in now.');
-                    header('Location: ../index.php');
-                    exit;
+                    $this->redirect('login');
                 } catch (PDOException $e) {
                     if ($e->getCode() !== '23000') { // duplicate key race — anything else is a real error
                         throw $e;
@@ -94,15 +93,15 @@ final class AuthController extends Controller
     {
         if ($this->isPost() && Session::verifyCsrf($_POST['csrf'] ?? null)) {
             $user = Session::user();
-            $this->logAction('logout', isset($user['id']) ? (int) $user['id'] : null, $user['username'] ?? null, 'user logout');
+            $wasAdmin = ($user['role'] ?? '') === 'admin';
+            $this->logAction('logout', isset($user['id']) ? (int) $user['id'] : null, $user['username'] ?? null, $wasAdmin ? 'admin logout' : 'user logout');
             Session::logout();
             Session::start(); // fresh session so the flash message can be shown
+            session_regenerate_id(true); // new ID + cookie; otherwise the browser deletes the cookie and the message is lost
             Session::flash('success', 'You have been logged out.');
-            header('Location: ../index.php');
-            exit;
+            $this->redirect($wasAdmin ? 'admin/login' : 'login'); // back to the login page for that account type
         }
-        header('Location: ../index.php');
-        exit;
+        $this->redirect('login');
     }
 
     private function handleLogin(string $role, string $endpoint, array $view): void

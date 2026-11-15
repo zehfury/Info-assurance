@@ -7,8 +7,8 @@ $params = static fn(int $p): array => array_filter(['endpoint' => $endpoint, 'pa
     <h2>SQL injection logs</h2>
 
     <div class="toolbar">
-        <form method="get" action="index.php" class="inline-form">
-            <input type="hidden" name="r" value="admin/logs">
+        <form method="get" action="<?= e(url('admin/logs')) ?>" class="inline-form">
+            <?php if (!clean_urls()): ?><input type="hidden" name="route" value="admin/logs"><?php endif; ?>
             <label for="endpoint">Entry point</label>
             <select id="endpoint" name="endpoint">
                 <option value="">All</option>

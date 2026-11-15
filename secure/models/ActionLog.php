@@ -8,7 +8,7 @@ final class ActionLog extends Model
         'login_failed'  => 'Login failed',
         'register'      => 'Registration',
         'logout'        => 'Logout',
-        'xss_lab'       => 'XSS lab viewed',
+        'xss_lab'       => 'XSS payload rendered',
     ];
 
     public function record(string $action, ?int $userId, ?string $identifier, ?string $details): int
@@ -23,7 +23,7 @@ final class ActionLog extends Model
             ':user_id'    => $userId,
             ':identifier' => $identifier === null ? null : mb_substr($identifier, 0, 200),
             ':details'    => $details === null ? null : mb_substr($details, 0, 500),
-            ':ip'         => mb_substr((string) ($_SERVER['REMOTE_ADDR'] ?? 'unknown'), 0, 45),
+            ':ip'         => client_ip(),
             ':user_agent' => isset($_SERVER['HTTP_USER_AGENT']) ? mb_substr((string) $_SERVER['HTTP_USER_AGENT'], 0, 255) : null,
             ':uri'        => isset($_SERVER['REQUEST_URI']) ? mb_substr((string) $_SERVER['REQUEST_URI'], 0, 255) : null,
         ]);

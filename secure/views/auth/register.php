@@ -47,5 +47,5 @@
         <button type="submit" class="btn">Create account</button>
     </form>
 
-    <p class="form-foot">Already registered? <a href="../index.php">Log in</a></p>
+    <p class="form-foot">Already registered? <a href="<?= e(url('login')) ?>">Log in</a></p>
 </div>

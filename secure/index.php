@@ -1,63 +1,14 @@
 <?php
 /**
- * Front controller for the secure area of the SQLi Training Lab.
- * Usage: http://localhost/<lab-folder>/secure/index.php?r=login
+ * Old address for the logged-in pages (/secure/index.php?r=dashboard).
+ * GET requests are forwarded to the clean address (/dashboard); the front controller is /index.php.
  */
 declare(strict_types=1);
 
-define('APP_PATH', __DIR__);
-define('VIEW_PATH', APP_PATH . '/views');
-
-require APP_PATH . '/core/helpers.php';
-
-spl_autoload_register(static function (string $class): void {
-    foreach (['core', 'models', 'controllers'] as $dir) {
-        $file = APP_PATH . "/$dir/$class.php";
-        if (is_file($file)) {
-            require $file;
-            return;
-        }
-    }
-});
-
-header('X-Frame-Options: DENY');
-header('X-Content-Type-Options: nosniff');
-header('Referrer-Policy: same-origin');
-header("Content-Security-Policy: default-src 'self'; style-src 'self' https://fonts.googleapis.com; "
-     . "font-src https://fonts.gstatic.com; frame-ancestors 'none'; form-action 'self'");
-
-Session::start();
-
-$routes = [
-    'vulnerable/login' => [VulnerableAuthController::class, 'login'],
-    'login'          => [AuthController::class,  'login'],
-    'register'       => [AuthController::class,  'register'],
-    'logout'         => [AuthController::class,  'logout'],
-    'admin/login'    => [AuthController::class,  'adminLogin'],
-    'dashboard'      => [UserController::class,  'dashboard'],
-    'admin'          => [AdminController::class, 'dashboard'],
-    'admin/logs'     => [AdminController::class, 'logs'],
-    'admin/logs/clear' => [AdminController::class, 'clearLogs'],
-    'admin/action-logs' => [AdminController::class, 'actionLogs'],
-    'admin/action-logs/clear' => [AdminController::class, 'clearActionLogs'],
-    'admin/users'    => [AdminController::class, 'users'],
-    'xss'            => [XssController::class, 'index'],
-];
+define('ENTRY_DEPTH', 1);
+require __DIR__ . '/bootstrap.php';
 
 $route = trim((string) ($_GET['r'] ?? 'login'), '/');
 
-if (!isset($routes[$route])) {
-    http_response_code(404);
-    echo 'Page not found.';
-    exit;
-}
-
-[$class, $method] = $routes[$route];
-
-try {
-    (new $class($route))->$method();
-} catch (Throwable $e) {
-    error_log((string) $e);
-    http_response_code(500);
-    echo 'Something went wrong. Check that MySQL is running and that schema.sql and secure/test.sql have been imported.';
-}
+redirect_to_clean_url($route);
+run_route($route); // only reached without mod_rewrite, or for a POST to the old address

@@ -14,8 +14,8 @@ $link = static function (string $route, string $label) use ($currentRoute): stri
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../style.css">
-<link rel="stylesheet" href="assets/secure.css">
+<link rel="stylesheet" href="<?= e(asset('style.css')) ?>">
+<link rel="stylesheet" href="<?= e(asset('secure/assets/secure.css')) ?>">
 </head>
 <body>
 <div class="banner"><?= $currentRoute === 'vulnerable/login' ? 'Intentionally vulnerable login + attack logging. Local lab only.' : 'Hardened area: prepared statements + attack logging. Local lab only.' ?></div>
@@ -39,7 +39,7 @@ $link = static function (string $route, string $label) use ($currentRoute): stri
     <?php if (!in_array($currentRoute, ['login', 'register', 'admin/login'], true)): ?>
     <nav class="sidebar">
         <?php if (!$auth): ?>
-            <a href="../index.php">Secure Login</a>
+            <?= $link('login', 'Secure Login') ?>
             <?= $link('vulnerable/login', 'Vulnerable Login') ?>
             <?= $link('register', 'Register') ?>
             <?= $link('admin/login', 'Admin log in') ?>
@@ -53,8 +53,8 @@ $link = static function (string $route, string $label) use ($currentRoute): stri
         <?php endif; ?>
 
         <div class="nav-sep"></div>
-        <a href="../reps.php">Vulnerable lab</a>
-        <a href="../lesson.php">Lesson</a>
+        <a href="<?= e(url('lab')) ?>">Vulnerable lab</a>
+        <a href="<?= e(url('lesson')) ?>">Lesson</a>
         <a href="<?= e(url('xss')) ?>">XSS lab</a>
 
         <?php if ($auth): ?>

@@ -1,0 +1,29 @@
+# Clean addresses: /sqli-lab/admin/login instead of /sqli-lab/secure/admin/login.php
+# Needs mod_rewrite (on by default in XAMPP). Without it the app falls back to index.php?route=...
+
+Options -Indexes
+DirectoryIndex index.php
+
+# Never serve database dumps, notes or config-type files directly.
+<FilesMatch "\.(sql|md|json|lock|bak|ini|log)$">
+    Require all denied
+</FilesMatch>
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Tells PHP that clean addresses are available (see clean_urls() in secure/core/helpers.php).
+    RewriteRule ^ - [E=CLEAN_URLS:1]
+
+    # Internal folders of the secure app are not web pages.
+    RewriteRule ^secure/(config|core|models|controllers|views|lib)(/|$) - [F,L]
+
+    # Short names for the vulnerable lab pages.
+    RewriteRule ^lab$ reps.php [L,QSA]
+    RewriteRule ^lesson$ lesson.php [L,QSA]
+
+    # Every other address that isn't a real file goes to the front controller.
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.+)$ index.php?route=$1 [L,QSA]
+</IfModule>

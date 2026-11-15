@@ -43,10 +43,10 @@ require_once __DIR__ . '/nav.php';
                 <span class="eyebrow">Step 1</span>
                 <h2>User Directory Search</h2>
                 <p>Search the fictional user directory by ID. Try entering a plain number, or explore the
-                <a href="lesson.php">lesson panel</a> below for payloads that reveal how this search box works
+                <a href="<?= $lessonUrl ?>">lesson panel</a> below for payloads that reveal how this search box works
                 under the hood.</p>
 
-                <form class="search-form" action="reps.php" method="GET">
+                <form class="search-form" action="<?= $labUrl ?>" method="GET">
                     <input type="text" name="id" placeholder="Enter user ID, e.g. 1" value="<?= htmlspecialchars($_GET['id'] ?? '', ENT_QUOTES) ?>" autofocus>
                     <button type="submit">Search</button>
                 </form>

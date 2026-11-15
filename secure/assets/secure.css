@@ -78,3 +78,17 @@ table.results td { vertical-align: top; }
     nav.sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--border); padding: 12px; }
     main.content { padding: 20px 16px; }
 }
+
+/* XSS lab */
+.xss-suggestions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 16px; }
+.xss-suggestions-label { font-size: 13px; font-weight: 600; color: var(--text-dim); }
+.xss-chip {
+    display: inline-block; padding: 6px 12px; border-radius: 999px; font-size: 13px; font-weight: 500;
+    background: var(--slate-soft); color: var(--text); text-decoration: none; border: 1px solid var(--border);
+}
+.xss-chip:hover { background: var(--primary-soft); color: var(--primary); border-color: var(--primary); }
+.xss-side { font-size: 14px; margin: 0 0 8px; }
+.xss-side-bad { color: var(--danger); }
+.xss-side-good { color: #166534; }
+.xss-frame { width: 100%; height: 190px; border: 1px solid var(--border); border-radius: 8px; background: #fff; display: block; margin-bottom: 12px; }
+.xss-note { font-size: 13px; color: var(--text-dim); margin-top: 16px; }

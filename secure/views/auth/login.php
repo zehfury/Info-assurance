@@ -28,6 +28,9 @@
     </form>
 
     <?php if (!$isAdmin): ?>
-        <p class="form-foot">No account yet? <a href="../index.php?r=register">Register</a></p>
+        <p class="form-foot">No account yet? <a href="<?= e(url('register')) ?>">Register</a></p>
+        <p class="form-foot">Administrator? <a href="<?= e(url('admin/login')) ?>">Admin log in</a></p>
+    <?php else: ?>
+        <p class="form-foot">Not an administrator? <a href="<?= e(url('login')) ?>">User log in</a></p>
     <?php endif; ?>
 </div>

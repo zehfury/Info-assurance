@@ -6,8 +6,8 @@ $params = static fn(int $p): array => array_filter(['action' => $action, 'page' 
     <span class="eyebrow">Audit</span>
     <h2>Action logs</h2>
     <div class="toolbar">
-        <form method="get" action="index.php" class="inline-form">
-            <input type="hidden" name="r" value="admin/action-logs">
+        <form method="get" action="<?= e(url('admin/action-logs')) ?>" class="inline-form">
+            <?php if (!clean_urls()): ?><input type="hidden" name="route" value="admin/action-logs"><?php endif; ?>
             <label for="action">Action</label>
             <select id="action" name="action">
                 <option value="">All</option>

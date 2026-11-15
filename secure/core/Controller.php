@@ -70,7 +70,7 @@ abstract class Controller
     /** Log every field that looks like an SQL injection attempt, then alert the admin by email (throttled). */
     protected function inspectInput(string $endpoint, array $fields): void
     {
-        $ip  = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+        $ip  = clientIp();
         $ua  = $_SERVER['HTTP_USER_AGENT'] ?? null;
         $uri = $_SERVER['REQUEST_URI'] ?? null;
         $logged = [];

@@ -28,3 +28,16 @@ function url(string $route, array $params = []): string
 {
     return 'index.php?' . http_build_query(['r' => $route] + $params);
 }
+
+/** Collapse IPv6 loopback / IPv4-mapped forms down to plain IPv4 where possible. */
+function clientIp(): string
+{
+    $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+    if ($ip === '::1') {
+        return '127.0.0.1';
+    }
+    if (str_starts_with($ip, '::ffff:')) {
+        return substr($ip, 7); // ::ffff:192.168.1.5 -> 192.168.1.5
+    }
+    return $ip;
+}
